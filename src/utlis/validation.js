@@ -21,7 +21,37 @@ const signupValidation = (req) => {
       "Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, one number, and one symbol",
     );
   }
-  
 };
 
-module.exports = signupValidation;
+const validateEditProfileData = (req) => {
+  const editableFields = [
+    "firstName",
+    "lastName",
+    "about",
+    "age",
+    "gender",
+    "photoUrl",
+  ];
+  const isValid = Object.keys(req.body).every((field) =>
+    editableFields.includes(field),
+  );
+
+  if (!isValid) {
+    throw new Error("Invalid fields in request body");
+  }
+};
+
+const validateUserPasswordUpdate = (req) => {
+  const { newPassword } = req.body;
+  if (!newPassword || !validator.isStrongPassword(newPassword)) {
+    throw new Error(
+      "New password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, one number, and one symbol",
+    );
+  }
+};
+
+module.exports = {
+  signupValidation,
+  validateEditProfileData,
+  validateUserPasswordUpdate,
+};
