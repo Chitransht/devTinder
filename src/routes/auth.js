@@ -1,12 +1,12 @@
 const express = require('express');
 const authRouter = express.Router();
-const signupValidation = require('../utlis/validation');
+const {validateSignUpData} = require('../utlis/validation');
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
 
 authRouter.post("/signup", async (req, res) => {
   try {
-    signupValidation(req);
+    validateSignUpData(req);
 
     const { firstName, lastName, emailId, password } = req.body;
     //Encrypt the password before saving to the database
@@ -36,6 +36,7 @@ authRouter.post("/signup", async (req, res) => {
   }
 });
 
+
 authRouter.post("/login", async (req, res) => {
   try {
     const { emailId, password } = req.body;
@@ -43,23 +44,38 @@ authRouter.post("/login", async (req, res) => {
     const user = await User.findOne({ emailId });
 
     if (!user) {
-      throw new Error("Invalid credentials");
+      return res.status(401).json({
+        message: "Invalid credentials",
+      });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      throw new Error("Invalid credentials");
+      return res.status(401).json({
+        message: "Invalid credentials",
+      });
     }
 
     const token = await user.getJWT();
 
     res.cookie("token", token);
-    res.send({ message: "Login successful" });
+
+    return res.status(200).json({
+      message: "Login successful",
+      user: user,
+    });
+
   } catch (err) {
-    res.status(500).json({ message: "Error during login" });
+    console.error("Login error:", err);
+
+    return res.status(500).json({
+      message: "Error during login",
+      error: err.message,
+    });
   }
 });
+
 
 authRouter.post("/logout", (req, res) => {
   try {
