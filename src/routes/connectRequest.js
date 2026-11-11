@@ -3,13 +3,16 @@ const requestRouter = express.Router();
 
 const  userAuth  = require('../middleware/auth');
 const  ConnectionRequestModel  = require('../models/connectionRequest');
+const User = require('../models/user');
 
 
-requestRouter.post("/request/send/:status/:toUserIdd", userAuth, async (req, res) => {
+requestRouter.post("/request/send/:status/:toUserId", userAuth, async (req, res) => {
      try{
         const fromUserId = req.user._id;
-        const toUserId = req.params.toUserIdd;
+        const toUserId = req.params.toUserId;
         const status = req.params.status;
+
+        console.log(toUserId)
 
         const allowedStatuses = ['ignored', 'interested'];
         if(!allowedStatuses.includes(status)){
@@ -17,6 +20,7 @@ requestRouter.post("/request/send/:status/:toUserIdd", userAuth, async (req, res
         }
 
         const toUser = await User.findById(toUserId);
+        console.log(toUser)
         if(!toUser){
             return res.status(404).json({ message: "user not found" });
         }
@@ -46,7 +50,7 @@ requestRouter.post("/request/send/:status/:toUserIdd", userAuth, async (req, res
 })
 
 
-requestRouter.post("request/review/:status/:requestId", userAuth, async (req, res) => {
+requestRouter.post("/request/review/:status/:requestId", userAuth, async (req, res) => {
     try{
         const loggedInUserId = req.user._id;
         const {status, requestId} = req.params;

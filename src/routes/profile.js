@@ -2,11 +2,13 @@ const express = require("express");
 const profileRouter = express.Router();
 const userAuth = require("../middleware/auth");
 const { validate } = require("../models/user");
+const { validateEditProfileData } = require("../utlis/validation");
 
-profileRouter.get("/profile", userAuth, async (req, res) => {
+profileRouter.get("/profile/view", userAuth, async (req, res) => {
   try {
     const user = req.user;
-    res.send({ user });
+    
+    res.send( user );
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -14,7 +16,8 @@ profileRouter.get("/profile", userAuth, async (req, res) => {
 
 profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
   try {
-    if (validateEditProfileData(req)) {
+    
+    if (!validateEditProfileData(req)) {
       throw new Error("Invalid fields in request body");
     }
 

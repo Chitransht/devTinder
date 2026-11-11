@@ -1,8 +1,8 @@
-const express = require('express');
+const express = require("express");
 const authRouter = express.Router();
-const {validateSignUpData} = require('../utlis/validation');
-const bcrypt = require('bcrypt');
-const User = require('../models/user');
+const { validateSignUpData } = require("../utlis/validation");
+const bcrypt = require("bcrypt");
+const User = require("../models/user");
 
 authRouter.post("/signup", async (req, res) => {
   try {
@@ -27,15 +27,12 @@ authRouter.post("/signup", async (req, res) => {
       message: "User created successfully",
     });
   } catch (err) {
-    console.error("ERROR:", err);
-
     res.status(500).json({
       message: "Signup failed",
       error: err.message,
     });
   }
 });
-
 
 authRouter.post("/login", async (req, res) => {
   try {
@@ -61,11 +58,7 @@ authRouter.post("/login", async (req, res) => {
 
     res.cookie("token", token);
 
-    return res.status(200).json({
-      message: "Login successful",
-      user: user,
-    });
-
+     res.send(user);
   } catch (err) {
     console.error("Login error:", err);
 
@@ -76,14 +69,13 @@ authRouter.post("/login", async (req, res) => {
   }
 });
 
-
 authRouter.post("/logout", (req, res) => {
   try {
     res.clearCookie("token");
     res.send({ message: "Logout successful" });
   } catch (err) {
     res.status(500).json({ message: "Error during logout" });
-  } 
+  }
 });
 
 module.exports = authRouter;

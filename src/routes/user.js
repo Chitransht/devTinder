@@ -22,7 +22,7 @@ userRouter.get("/user/requests/received", userAuth, async (req, res) => {
   }
 });
 
-userRouter.get("/user/requests/accepted", userAuth, async (req, res) => {
+userRouter.get("/user/connections", userAuth, async (req, res) => {
   try {
     const loggedInUser = req.user;
     const acceptedRequests = await ConnectionRequest.find({
@@ -42,7 +42,7 @@ userRouter.get("/user/requests/accepted", userAuth, async (req, res) => {
       return row.fromUserId;
     });
 
-    res.json({ data });
+    res.json(data);
   } catch (err) {
     res.status(500).send({ error: "Internal server error" });
   }
@@ -52,7 +52,7 @@ userRouter.get("/feed", userAuth, async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     let limit = parseInt(req.query.limit) || 10;
-    limit = limit > 50 ? 50 : limit; 
+    limit = limit > 50 ? 50 : limit;
     const skip = (page - 1) * limit;
 
     const loggedInUser = req.user;
@@ -76,7 +76,7 @@ userRouter.get("/feed", userAuth, async (req, res) => {
       .skip(skip)
       .limit(limit);
 
-    res.json({ data: users });
+    res.json(users);
   } catch (err) {
     res.status(500).send({ error: "Internal server error" });
   }

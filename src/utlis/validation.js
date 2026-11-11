@@ -23,10 +23,10 @@ const validateEditProfileData = (req) => {
   const isValid = Object.keys(req.body).every((field) =>
     editableFields.includes(field),
   );
-
-  if (!isValid) {
+   if (!isValid) {
     throw new Error("Invalid fields in request body");
   }
+  return isValid
 };
 
 const validateUserPasswordUpdate = (req) => {
